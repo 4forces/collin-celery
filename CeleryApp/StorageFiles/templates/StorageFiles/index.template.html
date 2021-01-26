@@ -1,12 +1,21 @@
 {%extends 'base.template.html'%}
 {%load static %}
-{%load crispy_form_tags%}
+{%load crispy_forms_tags %}
 
 {%block content%}
     <h2>Upload a File</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{form.uploadfile|as_cripsy_field}}
+        <input type="file" name="uploadfile">
         <button class="btn-outline-primary" type="submit">Upload File</button>
     </form>
+    {% if context %}
+        <p>Uploaded file: <a href="{{ context.url }}">{{ context.url }}</a></p>
+    {%endif%}
+
+    {% if messages %}
+        {% for mes in messages %}
+        <b style="color: green;">{{mes}}</b>
+        {%endfor%}
+    {%endif%}
 {%endblock%}
