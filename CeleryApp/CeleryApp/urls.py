@@ -19,6 +19,6 @@ import StorageFiles.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', StorageFiles.views.index),
+    path('', StorageFiles.views.index, name="home"),
     path('accounts/', include('allauth.urls')),
 ]
