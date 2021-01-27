@@ -4,4 +4,4 @@ from .models import ClassifiedFile
 class FileForm(forms.ModelForm):
     class Meta:
         model = ClassifiedFile
-        fields = ('title', 'uploadfile', 'size', 'sensitivity')
+        fields = ('uploadfile',)

@@ -1,9 +1,8 @@
-from django.core.files.base import File
-from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse
-from django.contrib import messages
+from .models import ClassifiedFile
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .forms import FileForm
 
 # Create your views here.
@@ -14,40 +13,39 @@ def redirect_view(request):
 
 def index(request):
     create_form = FileForm(request.POST, request.FILES)
-    context = {}
-    if request.method == "POST":
-        uploaded_file = request.FILES['uploadfile']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    # if request.user.is_authenticated:
-    #     if request.method == 'POST':
-    #         if create_form.is_valid():
-    #             new_upload = create_form.save(commit=False)
-    #             uploaded_file = request.FILES['uploadfile']
-    #             title = uploaded_file.name
-    #             print(title)
-    #             new_upload.title = uploaded_file.name
-    #             new_upload.uploadfile = request.FILES['uploadfile']
-    #             new_upload.size = uploaded_file.size
-    #             new_upload.sensitivity = 0
-    #             new_upload.save()
-    #             print("file saved!")
-    #             messages.success(request, "File is uploaded")
-    #         else:
-    #             messages.error(request, "Form is invalid!")
-    #             return render(request, 'StorageFiles/index.template.html', {
-    #                 'form': create_form
-    #             })
-    # else:
-    #     messages.warning(request, "Kindly login before uploading any files!")
-    #     return render(request, 'StorageFiles/index.template.html', {
-    #         'form': create_form
-    #     })
+    if request.user.is_authenticated:
+        current_user = request.user
+        if request.method == 'POST':           
+            if create_form.is_valid():
+                form = create_form.save(commit=False)
+                form.owner = request.user
+                form.save()
+                messages.success(request, "File is uploaded")
+                return render(request, 'StorageFiles/index.template.html', {
+                    'form': create_form,
+                    'username': current_user,
+                })
+            else:
+                messages.error(request, "Form is invalid!")
+                return render(request, 'StorageFiles/index.template.html', {
+                    'form': create_form,
+                    'username': current_user,
+                })
+        else:
+            return render(request, 'StorageFiles/index.template.html', {
+                'form': create_form,
+                'username': current_user,
+            })
+    else:
+        messages.warning(request, "Kindly login before uploading any files!")
+        return render(request, 'StorageFiles/index.template.html', {
+            'form': create_form,
+        })
     
-    return render(request, 'StorageFiles/index.template.html', {
-        'form': create_form,
-        'context': context,
+@login_required
+def view_files(request, username):
+    current_user = User.objects.get(username=username).pk
+    files = ClassifiedFile.objects.filter(owner=current_user)
+    return render(request, 'StorageFiles/view_files.template.html', {
+        'files': files
     })

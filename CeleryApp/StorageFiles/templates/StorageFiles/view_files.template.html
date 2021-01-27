@@ -1,0 +1,36 @@
+{% extends 'base.template.html' %}
+{% load static %}
+{% comment %} {% load filename %} {% endcomment %}
+
+{%block content%}
+    <h2>Your Uploaded Files</h2>
+    <div class="container">
+        <a href="{%url 'home'%}" class="btn btn-sm btn-success">Upload File</a>
+    </div>
+    <div class="container">
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>File Size</th>
+                    <th>Upload Date</th>
+                    <th>Modified Date</th>
+                    <th>Uploader</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                <tr>
+                    <td>{{ file.uploadfile.name}}</td>
+                    <td>{{ file.uploadfile.size }}</td>
+                    <td>{{ file.created }}</td>
+                    <td>{{ file.updated }}</td>
+                    <td>{{ file.owner }}</td>
+                    <td><a href="{{ file.uploadfile.url }}" target="_blank" class="btn btn-outline-primary">Download File</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%endblock%}

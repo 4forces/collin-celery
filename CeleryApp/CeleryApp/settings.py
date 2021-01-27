@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'crispy_forms',
     
-    
     'StorageFiles',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'CeleryApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sensitivefiles',
+        'NAME': 'ClassifiedFiles',
         'USER': 'postgres',
         'PASSWORD': 'postgres123',
         'HOST': 'localhost',
@@ -160,6 +160,6 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/success'
+LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
