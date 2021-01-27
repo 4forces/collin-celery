@@ -1,9 +1,13 @@
+from django.db.models.query_utils import FilteredRelation
+from django.http.response import HttpResponse
 from .models import ClassifiedFile
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import FileForm
+import datetime
+from django.utils import timezone
 
 # Create your views here.
 
@@ -46,6 +50,37 @@ def index(request):
 def view_files(request, username):
     current_user = User.objects.get(username=username).pk
     files = ClassifiedFile.objects.filter(owner=current_user)
+    print(files)
     return render(request, 'StorageFiles/view_files.template.html', {
         'files': files
     })
+
+def checker(request, file_id):
+    current_user = request.user
+    file_to_check = get_object_or_404(ClassifiedFile, pk=file_id)
+    read_file = open(file_to_check.uploadfile.path, 'r')
+    read_file_data = read_file.read()
+    total_words = read_file_data.split()
+    sensitivity = 0
+    array1 = []
+    for word in total_words:
+        lower_word = word.lower()
+        clean_lower_word = lower_word.strip("!@#$%^&*()_+-=<>,.?/~`")
+        array1.append(clean_lower_word)
+    for each in array1:
+        if each == "secret":
+            sensitivity += 10
+        elif each == "dathena":
+            sensitivity += 7
+        elif each == "internal":
+            sensitivity += 5
+        elif each == "external":
+            sensitivity += 3
+        elif each == "public":
+            sensitivity += 1
+    read_file.close()
+    file_to_update = ClassifiedFile.objects.filter(pk=file_id)
+    file_to_update.update(sensitivity=sensitivity)
+    file_to_update.update(updated=timezone.now())
+    
+    return redirect("view_files", username=current_user)

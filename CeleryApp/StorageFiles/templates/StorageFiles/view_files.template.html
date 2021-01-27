@@ -13,6 +13,7 @@
                 <tr>
                     <th>File Name</th>
                     <th>File Size</th>
+                    <th>Sensitivity</th>
                     <th>Upload Date</th>
                     <th>Modified Date</th>
                     <th>Uploader</th>
@@ -24,10 +25,12 @@
                 <tr>
                     <td>{{ file.uploadfile.name}}</td>
                     <td>{{ file.uploadfile.size }}</td>
+                    <td>{{ file.sensitivity }}</td>
                     <td>{{ file.created }}</td>
                     <td>{{ file.updated }}</td>
                     <td>{{ file.owner }}</td>
                     <td><a href="{{ file.uploadfile.url }}" target="_blank" class="btn btn-outline-primary">Download File</a></td>
+                    <td><a href="{% url "checker" file_id=file.id %}" class="btn btn-outline-primary">Checker</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

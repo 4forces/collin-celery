@@ -16,9 +16,4 @@
         <a href="{% url 'view_files' username=username %}" class="btn btn-success">View Uploaded Files</a>
     </div>
     {% endif %}
-    {% if messages %}
-        {% for mes in messages %}
-        <b style="color: green;">{{mes}}</b>
-        {%endfor%}
-    {%endif%}
 {%endblock%}
