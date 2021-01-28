@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import FileForm
-import datetime
+from django.db.models.functions import Now
 from django.utils import timezone
 
 # Create your views here.
@@ -49,7 +49,7 @@ def index(request):
 @login_required
 def view_files(request, username):
     current_user = User.objects.get(username=username).pk
-    files = ClassifiedFile.objects.filter(owner=current_user)
+    files = ClassifiedFile.objects.filter(owner=current_user).order_by('created')
     print(files)
     return render(request, 'StorageFiles/view_files.template.html', {
         'files': files
@@ -81,6 +81,6 @@ def checker(request, file_id):
     read_file.close()
     file_to_update = ClassifiedFile.objects.filter(pk=file_id)
     file_to_update.update(sensitivity=sensitivity)
-    file_to_update.update(updated=timezone.now())
+    file_to_update.update(updated=Now())
     
     return redirect("view_files", username=current_user)
