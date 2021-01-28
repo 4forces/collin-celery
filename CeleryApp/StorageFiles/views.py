@@ -24,6 +24,7 @@ def index(request):
                 form = create_form.save(commit=False)
                 form.owner = request.user
                 form.save()
+                # form.check_sensitivity()
                 messages.success(request, "File is uploaded")
                 return render(request, 'StorageFiles/index.template.html', {
                     'form': create_form,
@@ -50,7 +51,6 @@ def index(request):
 def view_files(request, username):
     current_user = User.objects.get(username=username).pk
     files = ClassifiedFile.objects.filter(owner=current_user).order_by('created')
-    print(files)
     return render(request, 'StorageFiles/view_files.template.html', {
         'files': files
     })
@@ -84,3 +84,33 @@ def checker(request, file_id):
     file_to_update.update(updated=Now())
     
     return redirect("view_files", username=current_user)
+
+def auto_update_sensitivity():
+    all_files = ClassifiedFile.objects.all()
+    for file in all_files:
+        read_file = open(file.uploadfile.path, 'r')
+        read_file_data = read_file.read()
+        total_words = read_file_data.split()
+        sensitivity = 0
+        array1 = []
+        for word in total_words:
+            lower_word = word.lower()
+            clean_lower_word = lower_word.strip("!@#$%^&*()_+-=<>,.?/~`")
+            array1.append(clean_lower_word)
+        for each in array1:
+            if each == "secret":
+                sensitivity += 10
+            elif each == "dathena":
+                sensitivity += 7
+            elif each == "internal":
+                sensitivity += 5
+            elif each == "external":
+                sensitivity += 3
+            elif each == "public":
+                sensitivity += 1
+        read_file.close()
+        file_to_update = ClassifiedFile.objects.filter(pk=file.id)
+        file_to_update.update(sensitivity=sensitivity)
+        file_to_update.update(updated=Now())
+        print(f'{file}: {file.sensitivity}')
+        
