@@ -1,6 +1,7 @@
 from django.db.models.query_utils import FilteredRelation
 from django.http.response import HttpResponse
 from .models import ClassifiedFile
+from api.models import SensitiveFiles
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -110,6 +111,36 @@ def auto_update_sensitivity():
                 sensitivity += 1
         read_file.close()
         file_to_update = ClassifiedFile.objects.filter(pk=file.id)
+        file_to_update.update(sensitivity=sensitivity)
+        file_to_update.update(updated=Now())
+        print(f'{file}: {file.sensitivity}')
+
+
+def auto_update_sensitivity_api():
+    all_files = SensitiveFiles.objects.all()
+    for file in all_files:
+        read_file = open(file.uploadfile.path, 'r')
+        read_file_data = read_file.read()
+        total_words = read_file_data.split()
+        sensitivity = 0
+        array1 = []
+        for word in total_words:
+            lower_word = word.lower()
+            clean_lower_word = lower_word.strip("!@#$%^&*()_+-=<>,.?/~`")
+            array1.append(clean_lower_word)
+        for each in array1:
+            if each == "secret":
+                sensitivity += 10
+            elif each == "dathena":
+                sensitivity += 7
+            elif each == "internal":
+                sensitivity += 5
+            elif each == "external":
+                sensitivity += 3
+            elif each == "public":
+                sensitivity += 1
+        read_file.close()
+        file_to_update = SensitiveFiles.objects.filter(pk=file.id)
         file_to_update.update(sensitivity=sensitivity)
         file_to_update.update(updated=Now())
         print(f'{file}: {file.sensitivity}')

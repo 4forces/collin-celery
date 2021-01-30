@@ -7,13 +7,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'CeleryApp.settings')
 
 app = Celery('CeleryApp')
 
-app.config_from_object('django.conf:settings', namespace='CELERY')
+app.config_from_object('django.conf:settings', namespace="CELERY")
 
 app.conf.beat_schedule = {
     'auto_update_every_5_minutes': {
         'task': 'StorageFiles.tasks.update_sensitivity',
         'schedule': crontab(minute='*/5'),
-    }
+    },
 }
 
 app.autodiscover_tasks()
