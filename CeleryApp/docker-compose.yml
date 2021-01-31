@@ -1,6 +1,6 @@
 version: "3.8"
 
-servies:
+services:
   django:
       build: .
       container_name: django
@@ -9,7 +9,7 @@ servies:
           - .:/usr/src/app/
       ports:
           - "8000:8000"
-      environment: :
+      environment:
           - DEBUG=1
           - DJANGO_ALLOWED_HOST=localhost 127.0.0.1
       depends_on: 
@@ -17,7 +17,7 @@ servies:
           - rabbitmq
   pgdb:
       image: postgres:13.1-alpine
-      container_name: : pgdb
+      container_name: pgdb
       environment: 
           - POSTGRES_DB=postgres
           - POSTGRES_USER=postgres
@@ -34,6 +34,18 @@ servies:
       depends_on: 
           - django
           - rabbitmq
+  celery-beat:
+      build: .
+      command: celery -A CeleryApp beat -l info
+      volumes:
+          - .:/usr/src/app
+      depends_on: 
+          - django
+          - pgdb
+          - rabbitmq
+          - celery
+    
+
 volumes:
     pgdata:
   

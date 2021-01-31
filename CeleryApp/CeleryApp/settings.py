@@ -101,13 +101,26 @@ WSGI_APPLICATION = 'CeleryApp.wsgi.application'
 #     }
 # }
 
+# <!-- LOCALHOST POSTGRESQL --!>
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get("DB_NAME"),
+#         'USER': os.environ.get("DB_USER"),
+#         'PASSWORD': os.environ.get("DB_PASSWORD"),
+#         'HOST': 'localhost',
+#         'PORT': 5432,
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("DB_NAME"),
-        'USER': os.environ.get("DB_USER"),
-        'PASSWORD': os.environ.get("DB_PASSWORD"),
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'pgdb',
+        'PORT': 5432,
     }
 }
 
@@ -175,7 +188,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/sensitivefiles/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = ('amqp://rabbitmq', 'amqp://localhost')
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 
