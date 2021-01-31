@@ -38,7 +38,6 @@ def apiDetail(request, pk):
 def apiCreate(request):
     parser_classes(MultiPartParser,)
     serializer = SensitiveFilesSerializer(data=request.data)
-    print(serializer)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)

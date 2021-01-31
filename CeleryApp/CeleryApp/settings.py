@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest_auth',
+    'cwu-celeryapp',
 ]
 
 MIDDLEWARE = [
@@ -169,10 +170,12 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/sensitivefiles/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/sensitivefiles/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+CELERY_BROKER_URL = 'amqp://localhost'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 

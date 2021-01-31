@@ -1,3 +1,4 @@
+from logging import currentframe
 from django.db.models.query_utils import FilteredRelation
 from django.http.response import HttpResponse
 from .models import ClassifiedFile
@@ -55,6 +56,13 @@ def view_files(request, username):
     return render(request, 'StorageFiles/view_files.template.html', {
         'files': files
     })
+    
+def delete_file(request, file_id):
+    current_user = request.user
+    file_to_delete = get_object_or_404(ClassifiedFile, pk=file_id)
+    file_to_delete.delete()
+    messages.error(request, "File is deleted!")
+    return redirect("view_files", username=current_user)
 
 def checker(request, file_id):
     current_user = request.user

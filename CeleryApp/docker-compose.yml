@@ -1,0 +1,40 @@
+version: "3.8"
+
+servies:
+  django:
+      build: .
+      container_name: django
+      command: python manage.py runserver 0.0.0.0:8000
+      volumes:
+          - .:/usr/src/app/
+      ports:
+          - "8000:8000"
+      environment: :
+          - DEBUG=1
+          - DJANGO_ALLOWED_HOST=localhost 127.0.0.1
+      depends_on: 
+          - pgdb
+          - rabbitmq
+  pgdb:
+      image: postgres:13.1-alpine
+      container_name: : pgdb
+      environment: 
+          - POSTGRES_DB=postgres
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+      volumes:
+          - pgdata:/var/lib/postgresql/data
+  rabbitmq:
+      image: rabbitmq:3.8.11-alpine
+  celery:
+      build: .
+      command: celery -A CeleryApp worker -l info --pool=solo 
+      volumes:
+          - .:/usr/src/app
+      depends_on: 
+          - django
+          - rabbitmq
+volumes:
+    pgdata:
+  
+  

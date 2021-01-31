@@ -19,6 +19,8 @@
                     <th>Modified Date</th>
                     <th>Uploader</th>
                     <th>Download</th>
+                    <th>Sensitivity Checker</th>
+                    <th>Delete File</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +34,7 @@
                     <td>{{ file.owner }}</td>
                     <td><a href="{{ file.uploadfile.url }}" target="_blank" class="btn btn-outline-primary">Download File</a></td>
                     <td><a href="{% url "checker" file_id=file.id %}" class="btn btn-outline-primary">Checker</a></td>
+                    <td><a href="{% url "delete_file" file_id=file.id %}" class="btn btn-outline-danger">DELETE</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
